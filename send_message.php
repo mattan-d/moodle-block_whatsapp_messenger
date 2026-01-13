@@ -172,6 +172,12 @@ foreach ($recipients as $user) {
             $DB->insert_record('block_whatsapp_messenger_log', $log);
         } else {
             $failed_count++;
+            $error_message = 'Unknown error';
+            if (isset($result['error'])) {
+                $error_message = $result['error']['message'] ?? $result['error']['error_user_msg'] ?? json_encode($result['error']);
+            } elseif (is_string($result)) {
+                $error_message = $result;
+            }
             debug_log('Message failed', ['error' => $result]);
             
             // Log failed message
@@ -189,7 +195,8 @@ foreach ($recipients as $user) {
         }
     } catch (Exception $e) {
         $failed_count++;
-        debug_log('Exception occurred', ['error' => $e->getMessage()]);
+        $error_message = $e->getMessage();
+        debug_log('Exception occurred', ['error' => $error_message]);
         
         // Log error
         $log = new stdClass();
@@ -198,7 +205,7 @@ foreach ($recipients as $user) {
         $log->phone = $phone;
         $log->message = $message;
         $log->status = 'failed';
-        $log->error = $e->getMessage();
+        $log->error = $error_message;
         $log->timecreated = time();
         $log->senderid = $USER->id;
         
@@ -207,11 +214,16 @@ foreach ($recipients as $user) {
 }
 
 $response = [
-    'success' => true,
+    'success' => $failed_count === 0,
     'sent' => $success_count,
     'failed' => $failed_count,
     'total' => count($recipients)
 ];
+
+// Add error message if any failures occurred
+if ($failed_count > 0 && isset($error_message)) {
+    $response['error'] = $error_message;
+}
 
 debug_log('Script completed', $response);
 

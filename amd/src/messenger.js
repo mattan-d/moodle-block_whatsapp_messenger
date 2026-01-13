@@ -2,6 +2,9 @@
 
 var M = window.M // Declare the M variable
 
+// Declare the define variable
+var define = window.define
+
 define(["jquery", "core/ajax", "core/notification"], ($, Ajax, Notification) => ({
   init: (courseid) => {
     console.log("[v0] WhatsApp Messenger initialized for course:", courseid)
@@ -57,9 +60,13 @@ define(["jquery", "core/ajax", "core/notification"], ($, Ajax, Notification) => 
             })
           } else {
             console.log("[v0] Response indicates failure:", response.error)
-            $status.addClass("alert alert-danger").text(response.error)
+            var errorMsg = response.error || "Failed to send message"
+            if (response.failed > 0 && response.total > 0) {
+              errorMsg = "Failed: " + response.failed + " out of " + response.total + " recipients. Error: " + errorMsg
+            }
+            $status.addClass("alert alert-danger").text(errorMsg)
             Notification.addNotification({
-              message: response.error,
+              message: errorMsg,
               type: "error",
             })
           }
@@ -67,6 +74,16 @@ define(["jquery", "core/ajax", "core/notification"], ($, Ajax, Notification) => 
         error: (xhr, status, error) => {
           console.log("[v0] AJAX error:", { xhr, status, error })
           var errorMsg = "Error sending message: " + error
+          if (xhr.responseText) {
+            try {
+              var errorData = JSON.parse(xhr.responseText)
+              if (errorData.error) {
+                errorMsg = errorData.error
+              }
+            } catch (e) {
+              errorMsg = "Error sending message: " + xhr.responseText.substring(0, 200)
+            }
+          }
           $status.addClass("alert alert-danger").text(errorMsg)
           Notification.addNotification({
             message: errorMsg,
