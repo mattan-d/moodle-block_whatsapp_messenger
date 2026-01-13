@@ -19,6 +19,9 @@ $string['templatename_desc'] = 'WhatsApp template name (optional). If set, messa
 $string['templatelang'] = 'Template Language';
 $string['templatelang_desc'] = 'Template language code (e.g., en, en_US, he_IL). Default: en';
 
+$string['debugmode'] = 'Debug Mode';
+$string['debugmode_desc'] = 'Enable debug logging to PHP error log. Use this to troubleshoot issues with message sending.';
+
 // Block content
 $string['recipient'] = 'Recipient';
 $string['allstudents'] = 'All Students';

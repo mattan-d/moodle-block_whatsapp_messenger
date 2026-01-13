@@ -57,7 +57,8 @@ class block_whatsapp_messenger extends block_base {
         
         $html .= html_writer::start_tag('form', [
             'id' => 'whatsapp-message-form',
-            'class' => 'whatsapp-form'
+            'class' => 'whatsapp-form',
+            'onsubmit' => 'return false;' // Prevent default submission
         ]);
         
         // Recipient selection

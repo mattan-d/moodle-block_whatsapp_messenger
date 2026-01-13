@@ -47,4 +47,11 @@ if ($ADMIN->fulltree) {
         'en',
         PARAM_TEXT
     ));
+    
+    $settings->add(new admin_setting_configcheckbox(
+        'block_whatsapp_messenger/debugmode',
+        get_string('debugmode', 'block_whatsapp_messenger'),
+        get_string('debugmode_desc', 'block_whatsapp_messenger'),
+        0
+    ));
 }
