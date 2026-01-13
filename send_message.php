@@ -120,6 +120,10 @@ foreach ($recipients as $user) {
                         'parameters' => [
                             [
                                 'type' => 'text',
+                                'text' => $user->firstname
+                            ],
+                            [
+                                'type' => 'text',
                                 'text' => $message
                             ]
                         ]
@@ -127,7 +131,7 @@ foreach ($recipients as $user) {
                 ]
             ]
         ];
-        debug_log('Using template message', ['template' => $templatename]);
+        debug_log('Using template message', ['template' => $templatename, 'params' => [$user->firstname, $message]]);
     } else {
         // Use text message
         $data = [

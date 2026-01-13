@@ -2,9 +2,6 @@
 
 var M = window.M // Declare the M variable
 
-// Declare the define variable
-var define = window.define
-
 define(["jquery", "core/ajax", "core/notification"], ($, Ajax, Notification) => ({
   init: (courseid) => {
     console.log("[v0] WhatsApp Messenger initialized for course:", courseid)
