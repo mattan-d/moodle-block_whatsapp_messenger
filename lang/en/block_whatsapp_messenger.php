@@ -19,6 +19,24 @@ $string['templatename_desc'] = 'WhatsApp template name (optional). If set, messa
 $string['templatelang'] = 'Template Language';
 $string['templatelang_desc'] = 'Template language code (e.g., en, en_US, he_IL). Default: en';
 
+$string['templatecontent'] = 'Template Content (for reference)';
+$string['templatecontent_desc'] = 'Paste your WhatsApp template here for reference. The plugin will parse {{placeholders}} and map them to available data.<br><br>
+<strong>Available placeholders:</strong><br>
+{firstname} - Student first name<br>
+{lastname} - Student last name<br>
+{fullname} - Student full name<br>
+{email} - Student email<br>
+{coursename} - Course name<br>
+{courseid} - Course ID<br>
+{courseshortname} - Course short name<br>
+{message} - The actual message content entered by the teacher<br>
+{teachername} - Teacher full name<br>
+{sitename} - Site name<br><br>
+<strong>Example template:</strong><br>
+שלום {firstname}, להלן הודעה שנשלחה מצוות התמיכה שלנו:<br>
+*תוכן:* {message}<br>
+בברכה, צוות התמיכה.';
+
 $string['debugmode'] = 'Debug Mode';
 $string['debugmode_desc'] = 'Enable debug logging to PHP error log. Use this to troubleshoot issues with message sending.';
 

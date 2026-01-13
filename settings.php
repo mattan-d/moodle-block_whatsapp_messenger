@@ -32,6 +32,7 @@ if ($ADMIN->fulltree) {
         PARAM_TEXT
     ));
     
+    // Template Name
     $settings->add(new admin_setting_configtext(
         'block_whatsapp_messenger/templatename',
         get_string('templatename', 'block_whatsapp_messenger'),
@@ -40,6 +41,7 @@ if ($ADMIN->fulltree) {
         PARAM_TEXT
     ));
     
+    // Template Language
     $settings->add(new admin_setting_configtext(
         'block_whatsapp_messenger/templatelang',
         get_string('templatelang', 'block_whatsapp_messenger'),
@@ -48,6 +50,16 @@ if ($ADMIN->fulltree) {
         PARAM_TEXT
     ));
     
+    // Template Content
+    $settings->add(new admin_setting_configtextarea(
+        'block_whatsapp_messenger/templatecontent',
+        get_string('templatecontent', 'block_whatsapp_messenger'),
+        get_string('templatecontent_desc', 'block_whatsapp_messenger'),
+        '',
+        PARAM_RAW
+    ));
+    
+    // Debug Mode
     $settings->add(new admin_setting_configcheckbox(
         'block_whatsapp_messenger/debugmode',
         get_string('debugmode', 'block_whatsapp_messenger'),

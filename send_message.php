@@ -45,11 +45,13 @@ $phonenumberid = get_config('block_whatsapp_messenger', 'phonenumberid');
 $apiversion = get_config('block_whatsapp_messenger', 'apiversion') ?: 'v17.0';
 $templatename = get_config('block_whatsapp_messenger', 'templatename');
 $templatelang = get_config('block_whatsapp_messenger', 'templatelang') ?: 'en';
+$templatecontent = get_config('block_whatsapp_messenger', 'templatecontent');
 
 debug_log('Configuration loaded', [
     'apiversion' => $apiversion,
     'templatename' => $templatename,
     'templatelang' => $templatelang,
+    'has_template_content' => !empty($templatecontent),
     'has_token' => !empty($accesstoken),
     'has_phoneid' => !empty($phonenumberid)
 ]);
@@ -95,16 +97,66 @@ $api_url = "https://graph.facebook.com/{$apiversion}/{$phonenumberid}/messages";
 
 debug_log('Starting message sending', ['api_url' => $api_url, 'recipient_count' => count($recipients)]);
 
+$template_params = [];
+if (!empty($templatecontent)) {
+    preg_match_all('/{(\w+)}/', $templatecontent, $matches);
+    $template_params = $matches[1];
+    debug_log('Template placeholders found', ['placeholders' => $template_params]);
+}
+
 foreach ($recipients as $user) {
     $phone = !empty($user->phone1) ? $user->phone1 : $user->phone2;
     
-    // Clean phone number (remove spaces, dashes, etc.)
     $phone = preg_replace('/[^0-9+]/', '', $phone);
     
     debug_log('Processing recipient', ['userid' => $user->id, 'phone' => $phone]);
     
-    if (!empty($templatename)) {
-        // Use template message
+    if (!empty($templatename) && !empty($templatecontent)) {
+        $parameters = [];
+        foreach ($template_params as $placeholder) {
+            $value = '';
+            switch ($placeholder) {
+                case 'firstname':
+                    $value = $user->firstname;
+                    break;
+                case 'lastname':
+                    $value = $user->lastname;
+                    break;
+                case 'fullname':
+                    $value = fullname($user);
+                    break;
+                case 'email':
+                    $value = $user->email;
+                    break;
+                case 'coursename':
+                    $value = $course->fullname;
+                    break;
+                case 'courseid':
+                    $value = $course->id;
+                    break;
+                case 'courseshortname':
+                    $value = $course->shortname;
+                    break;
+                case 'message':
+                    $value = $message;
+                    break;
+                case 'teachername':
+                    $value = fullname($USER);
+                    break;
+                case 'sitename':
+                    global $SITE;
+                    $value = $SITE->fullname;
+                    break;
+                default:
+                    $value = '';
+            }
+            
+            $parameters[] = [
+                'type' => 'text',
+                'text' => $value
+            ];
+        }
+        
         $data = [
             'messaging_product' => 'whatsapp',
             'to' => $phone,
@@ -117,23 +169,13 @@ foreach ($recipients as $user) {
                 'components' => [
                     [
                         'type' => 'body',
-                        'parameters' => [
-                            [
-                                'type' => 'text',
-                                'text' => $user->firstname
-                            ],
-                            [
-                                'type' => 'text',
-                                'text' => $message
-                            ]
-                        ]
+                        'parameters' => $parameters
                     ]
                 ]
             ]
         ];
-        debug_log('Using template message', ['template' => $templatename, 'params' => [$user->firstname, $message]]);
+        debug_log('Using template message with dynamic params', ['template' => $templatename, 'param_count' => count($parameters)]);
     } else {
-        // Use text message
         $data = [
             'messaging_product' => 'whatsapp',
             'to' => $phone,
@@ -145,7 +187,6 @@ foreach ($recipients as $user) {
         debug_log('Using text message');
     }
     
-    // Send request using Moodle's curl wrapper
     $curl = new curl();
     $curl->setHeader([
         'Authorization: Bearer ' . $accesstoken,
@@ -162,7 +203,6 @@ foreach ($recipients as $user) {
             $success_count++;
             debug_log('Message sent successfully', ['messageid' => $result['messages'][0]['id'] ?? '']);
             
-            // Log successful message
             $log = new stdClass();
             $log->courseid = $courseid;
             $log->userid = $user->id;
@@ -184,7 +224,6 @@ foreach ($recipients as $user) {
             }
             debug_log('Message failed', ['error' => $result]);
             
-            // Log failed message
             $log = new stdClass();
             $log->courseid = $courseid;
             $log->userid = $user->id;
@@ -202,7 +241,6 @@ foreach ($recipients as $user) {
         $error_message = $e->getMessage();
         debug_log('Exception occurred', ['error' => $error_message]);
         
-        // Log error
         $log = new stdClass();
         $log->courseid = $courseid;
         $log->userid = $user->id;
@@ -224,7 +262,6 @@ $response = [
     'total' => count($recipients)
 ];
 
-// Add error message if any failures occurred
 if ($failed_count > 0 && isset($error_message)) {
     $response['error'] = $error_message;
 }
