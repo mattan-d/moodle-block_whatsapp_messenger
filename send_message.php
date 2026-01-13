@@ -147,6 +147,15 @@ foreach ($recipients as $user) {
                     global $SITE;
                     $value = $SITE->fullname;
                     break;
+                case 'date':
+                    $value = userdate(time(), get_string('strftimedatefullshort'));
+                    break;
+                case 'datetime':
+                    $value = userdate(time(), get_string('strftimedatetime'));
+                    break;
+                case 'time':
+                    $value = userdate(time(), get_string('strftimetime'));
+                    break;
                 default:
                     $value = '';
             }

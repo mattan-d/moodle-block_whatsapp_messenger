@@ -31,10 +31,14 @@ $string['templatecontent_desc'] = 'Paste your WhatsApp template here for referen
 {courseshortname} - Course short name<br>
 {message} - The actual message content entered by the teacher<br>
 {teachername} - Teacher full name<br>
-{sitename} - Site name<br><br>
+{sitename} - Site name<br>
+{date} - Current date (short format)<br>
+{datetime} - Current date and time<br>
+{time} - Current time<br><br>
 <strong>Example template:</strong><br>
 שלום {firstname}, להלן הודעה שנשלחה מצוות התמיכה שלנו:<br>
 *תוכן:* {message}<br>
+*תאריך:* {date}<br>
 בברכה, צוות התמיכה.';
 
 $string['debugmode'] = 'Debug Mode';
