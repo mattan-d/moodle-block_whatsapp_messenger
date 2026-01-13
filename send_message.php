@@ -8,7 +8,7 @@ $courseid = required_param('courseid', PARAM_INT);
 $recipient = required_param('recipient', PARAM_TEXT);
 $message = required_param('message', PARAM_TEXT);
 
-require_login($courseid);
+require_login();
 require_sesskey();
 
 $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
@@ -16,10 +16,11 @@ $context = context_course::instance($courseid);
 
 require_capability('block/whatsapp_messenger:sendmessage', $context);
 
-// Get plugin configuration
 $accesstoken = get_config('block_whatsapp_messenger', 'accesstoken');
 $phonenumberid = get_config('block_whatsapp_messenger', 'phonenumberid');
 $apiversion = get_config('block_whatsapp_messenger', 'apiversion') ?: 'v17.0';
+$templatename = get_config('block_whatsapp_messenger', 'templatename');
+$templatelang = get_config('block_whatsapp_messenger', 'templatelang') ?: 'en';
 
 if (empty($accesstoken) || empty($phonenumberid)) {
     echo json_encode(['success' => false, 'error' => get_string('notconfigured', 'block_whatsapp_messenger')]);
@@ -62,15 +63,41 @@ foreach ($recipients as $user) {
     // Clean phone number (remove spaces, dashes, etc.)
     $phone = preg_replace('/[^0-9+]/', '', $phone);
     
-    // Prepare message data
-    $data = [
-        'messaging_product' => 'whatsapp',
-        'to' => $phone,
-        'type' => 'text',
-        'text' => [
-            'body' => $message
-        ]
-    ];
+    if (!empty($templatename)) {
+        // Use template message
+        $data = [
+            'messaging_product' => 'whatsapp',
+            'to' => $phone,
+            'type' => 'template',
+            'template' => [
+                'name' => $templatename,
+                'language' => [
+                    'code' => $templatelang
+                ],
+                'components' => [
+                    [
+                        'type' => 'body',
+                        'parameters' => [
+                            [
+                                'type' => 'text',
+                                'text' => $message
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+    } else {
+        // Use text message
+        $data = [
+            'messaging_product' => 'whatsapp',
+            'to' => $phone,
+            'type' => 'text',
+            'text' => [
+                'body' => $message
+            ]
+        ];
+    }
     
     // Send request using Moodle's curl wrapper
     $curl = new curl();

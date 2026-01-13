@@ -14,6 +14,11 @@ $string['phonenumberid_desc'] = 'Your WhatsApp Business phone number ID';
 $string['apiversion'] = 'API Version';
 $string['apiversion_desc'] = 'WhatsApp API version (default: v17.0)';
 
+$string['templatename'] = 'Template Name';
+$string['templatename_desc'] = 'WhatsApp template name (optional). If set, messages will be sent using this template instead of plain text.';
+$string['templatelang'] = 'Template Language';
+$string['templatelang_desc'] = 'Template language code (e.g., en, en_US, he_IL). Default: en';
+
 // Block content
 $string['recipient'] = 'Recipient';
 $string['allstudents'] = 'All Students';

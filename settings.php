@@ -31,4 +31,20 @@ if ($ADMIN->fulltree) {
         'v17.0',
         PARAM_TEXT
     ));
+    
+    $settings->add(new admin_setting_configtext(
+        'block_whatsapp_messenger/templatename',
+        get_string('templatename', 'block_whatsapp_messenger'),
+        get_string('templatename_desc', 'block_whatsapp_messenger'),
+        '',
+        PARAM_TEXT
+    ));
+    
+    $settings->add(new admin_setting_configtext(
+        'block_whatsapp_messenger/templatelang',
+        get_string('templatelang', 'block_whatsapp_messenger'),
+        get_string('templatelang_desc', 'block_whatsapp_messenger'),
+        'en',
+        PARAM_TEXT
+    ));
 }
