@@ -6,9 +6,11 @@ A Moodle block plugin that enables teachers to send WhatsApp messages to student
 
 - Send WhatsApp messages to individual students or all enrolled students
 - Plugin-level configuration for WhatsApp Business API credentials
+- Support for WhatsApp templates with dynamic placeholders
 - Message logging for tracking sent messages
 - AJAX-based interface with real-time status updates
 - Uses students' phone numbers from their Moodle profile
+- Multi-language support (English and Hebrew)
 
 ## Requirements
 
@@ -29,6 +31,27 @@ Go to **Site administration > Plugins > Blocks > WhatsApp Messenger** and config
 - **Access Token**: Your WhatsApp Business API access token
 - **Phone Number ID**: Your WhatsApp Business phone number ID
 - **API Version**: WhatsApp API version (default: v17.0)
+- **Template Name**: WhatsApp template name (optional)
+- **Template Language**: Template language code (e.g., en_US, he_IL)
+- **Template Content**: Paste your template for reference with available placeholders
+- **Debug Mode**: Enable detailed logging for troubleshooting
+
+### Template Placeholders
+
+Available placeholders for templates:
+- `{firstname}` - Student first name
+- `{lastname}` - Student last name
+- `{fullname}` - Student full name
+- `{email}` - Student email
+- `{coursename}` - Course name
+- `{courseid}` - Course ID
+- `{courseshortname}` - Course short name
+- `{message}` - The actual message content entered by the teacher
+- `{teachername}` - Teacher full name
+- `{sitename}` - Site name
+- `{date}` - Current date (short format)
+- `{datetime}` - Current date and time
+- `{time}` - Current time
 
 ## Usage
 
@@ -48,6 +71,30 @@ The plugin will send messages to students who have phone numbers in their profil
 
 The plugin creates a log table `block_whatsapp_messenger_log` to track all sent messages.
 
+## Copyright
+
+Copyright © 2025 [CentricApp LTD](https://centricapp.co.il)
+
+This plugin was developed by CentricApp LTD, a leading provider of educational technology solutions.
+
 ## License
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+## Support
+
+For support and inquiries, please visit [centricapp.co.il](https://centricapp.co.il)
+
+### WhatsApp Business Phone Setup / התקנת מספר טלפון ייעודי
+
+**עברית:**
+אם אתם מעוניינים להתקין מספר טלפון ייעודי לשליחת הודעות WhatsApp, אנו יכולים לסייע לכם ברכישה, קונפיגורציה והתקנה של המערכת. ניתן לפנות אלינו במייל:
+
+📧 **support@centricapp.co.il**
+
+**English:**
+If you would like to set up a dedicated phone number for sending WhatsApp messages, we can assist you with purchasing, configuration, and installation of the system. Please contact us at:
+
+📧 **support@centricapp.co.il**
