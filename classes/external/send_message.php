@@ -70,7 +70,7 @@ class send_message extends external_api {
         // Get context and check permissions.
         $context = context_course::instance($params['courseid']);
         self::validate_context($context);
-        require_capability('block/whatsapp_messenger:sendmessages', $context);
+        require_capability('block/whatsapp_messenger:sendmessage', $context);
 
         $debugmode = get_config('block_whatsapp_messenger', 'debugmode');
         
