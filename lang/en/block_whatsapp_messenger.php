@@ -74,6 +74,8 @@ $string['sendmessage'] = 'Send Message';
 $string['nopermission'] = 'You do not have permission to send WhatsApp messages.';
 $string['notconfigured'] = 'WhatsApp Messenger is not configured. Please contact your administrator.';
 $string['norecipients'] = 'No recipients found with phone numbers.';
+$string['apicredentialsnotconfigured'] = 'WhatsApp API credentials not configured';
+$string['noreciplentswithphonenumbersfound'] = 'No recipients with phone numbers found';
 
 // Status messages
 $string['messagesent'] = 'Message sent successfully to {$a} student(s)';

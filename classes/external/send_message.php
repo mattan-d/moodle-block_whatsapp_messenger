@@ -89,7 +89,7 @@ class send_message extends external_api {
         if (empty($accesstoken) || empty($phonenumberid)) {
             return [
                 'success' => false,
-                'message' => 'WhatsApp API credentials not configured',
+                'message' => get_string('apicredentialsnotconfigured', 'block_whatsapp_messenger'),
                 'successcount' => 0,
                 'failcount' => 0,
             ];
@@ -110,7 +110,7 @@ class send_message extends external_api {
         if (empty($recipients)) {
             return [
                 'success' => false,
-                'message' => 'No recipients with phone numbers found',
+                'message' => get_string('noreciplentswithphonenumbersfound', 'block_whatsapp_messenger'),
                 'successcount' => 0,
                 'failcount' => 0,
             ];

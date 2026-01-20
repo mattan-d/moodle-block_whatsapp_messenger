@@ -74,6 +74,8 @@ $string['sendmessage'] = 'שלחו הודעה';
 $string['nopermission'] = 'אין לכם הרשאה לשלוח הודעות WhatsApp.';
 $string['notconfigured'] = 'שליחת הודעות WhatsApp לא מוגדרת. אנא פנו למנהל המערכת.';
 $string['norecipients'] = 'לא נמצאו נמענים עם מספרי טלפון.';
+$string['apicredentialsnotconfigured'] = 'אישורי WhatsApp API לא מוגדרים';
+$string['noreciplentswithphonenumbersfound'] = 'לא נמצאו נמענים עם מספרי טלפון';
 
 // Status messages
 $string['messagesent'] = 'ההודעה נשלחה בהצלחה ל-{$a} סטודנט/ים';
