@@ -48,14 +48,15 @@ class provider implements
     public static function get_metadata(collection $collection): collection {
         // WhatsApp messages log table.
         $collection->add_database_table(
-            'block_whatsapp_log',
+            'block_whatsapp_messenger_log',
             [
                 'userid' => 'privacy:metadata:block_whatsapp_log:userid',
                 'courseid' => 'privacy:metadata:block_whatsapp_log:courseid',
-                'recipient' => 'privacy:metadata:block_whatsapp_log:recipient',
+                'senderid' => 'privacy:metadata:block_whatsapp_log:senderid',
+                'phone' => 'privacy:metadata:block_whatsapp_log:phone',
                 'message' => 'privacy:metadata:block_whatsapp_log:message',
                 'status' => 'privacy:metadata:block_whatsapp_log:status',
-                'response' => 'privacy:metadata:block_whatsapp_log:response',
+                'error' => 'privacy:metadata:block_whatsapp_log:error',
                 'timecreated' => 'privacy:metadata:block_whatsapp_log:timecreated',
             ],
             'privacy:metadata:block_whatsapp_log'
@@ -90,8 +91,8 @@ class provider implements
         $sql = "SELECT DISTINCT ctx.id
                   FROM {context} ctx
                   JOIN {course} c ON c.id = ctx.instanceid AND ctx.contextlevel = :contextcourse
-                  JOIN {block_whatsapp_log} wl ON wl.courseid = c.id
-                 WHERE wl.userid = :userid";
+                  JOIN {block_whatsapp_messenger_log} wl ON wl.courseid = c.id
+                 WHERE wl.senderid = :userid";
 
         $contextlist->add_from_sql($sql, [
             'contextcourse' => CONTEXT_COURSE,
@@ -102,8 +103,8 @@ class provider implements
         $sql = "SELECT DISTINCT ctx.id
                   FROM {context} ctx
                   JOIN {course} c ON c.id = ctx.instanceid AND ctx.contextlevel = :contextcourse
-                  JOIN {block_whatsapp_log} wl ON wl.courseid = c.id
-                 WHERE wl.recipient = :userid";
+                  JOIN {block_whatsapp_messenger_log} wl ON wl.courseid = c.id
+                 WHERE wl.userid = :userid";
 
         $contextlist->add_from_sql($sql, [
             'contextcourse' => CONTEXT_COURSE,
@@ -126,15 +127,15 @@ class provider implements
         }
 
         // Users who sent messages.
-        $sql = "SELECT wl.userid
-                  FROM {block_whatsapp_log} wl
+        $sql = "SELECT wl.senderid as userid
+                  FROM {block_whatsapp_messenger_log} wl
                  WHERE wl.courseid = :courseid";
 
         $userlist->add_from_sql('userid', $sql, ['courseid' => $context->instanceid]);
 
         // Users who received messages.
-        $sql = "SELECT wl.recipient as userid
-                  FROM {block_whatsapp_log} wl
+        $sql = "SELECT wl.userid
+                  FROM {block_whatsapp_messenger_log} wl
                  WHERE wl.courseid = :courseid";
 
         $userlist->add_from_sql('userid', $sql, ['courseid' => $context->instanceid]);
@@ -164,8 +165,8 @@ class provider implements
 
             // Export messages sent by the user.
             $sql = "SELECT *
-                      FROM {block_whatsapp_log}
-                     WHERE courseid = :courseid AND userid = :userid
+                      FROM {block_whatsapp_messenger_log}
+                     WHERE courseid = :courseid AND senderid = :userid
                   ORDER BY timecreated ASC";
 
             $messages = $DB->get_records_sql($sql, [
@@ -176,12 +177,13 @@ class provider implements
             if (!empty($messages)) {
                 $data = [];
                 foreach ($messages as $message) {
-                    $recipient = $DB->get_record('user', ['id' => $message->recipient], 'firstname, lastname');
+                    $recipient = $DB->get_record('user', ['id' => $message->userid], 'firstname, lastname');
                     $data[] = [
                         'recipient' => $recipient ? fullname($recipient) : 'Unknown',
+                        'phone' => $message->phone,
                         'message' => $message->message,
                         'status' => $message->status,
-                        'response' => $message->response,
+                        'error' => $message->error,
                         'timecreated' => \core_privacy\local\request\transform::datetime($message->timecreated),
                     ];
                 }
@@ -193,8 +195,8 @@ class provider implements
 
             // Export messages received by the user.
             $sql = "SELECT *
-                      FROM {block_whatsapp_log}
-                     WHERE courseid = :courseid AND recipient = :userid
+                      FROM {block_whatsapp_messenger_log}
+                     WHERE courseid = :courseid AND userid = :userid
                   ORDER BY timecreated ASC";
 
             $messages = $DB->get_records_sql($sql, [
@@ -205,7 +207,7 @@ class provider implements
             if (!empty($messages)) {
                 $data = [];
                 foreach ($messages as $message) {
-                    $sender = $DB->get_record('user', ['id' => $message->userid], 'firstname, lastname');
+                    $sender = $DB->get_record('user', ['id' => $message->senderid], 'firstname, lastname');
                     $data[] = [
                         'sender' => $sender ? fullname($sender) : 'Unknown',
                         'message' => $message->message,
@@ -233,7 +235,7 @@ class provider implements
             return;
         }
 
-        $DB->delete_records('block_whatsapp_log', ['courseid' => $context->instanceid]);
+        $DB->delete_records('block_whatsapp_messenger_log', ['courseid' => $context->instanceid]);
     }
 
     /**
@@ -258,15 +260,15 @@ class provider implements
             $courseid = $context->instanceid;
 
             // Delete messages sent by the user.
-            $DB->delete_records('block_whatsapp_log', [
+            $DB->delete_records('block_whatsapp_messenger_log', [
                 'courseid' => $courseid,
-                'userid' => $userid,
+                'senderid' => $userid,
             ]);
 
             // Delete messages received by the user.
-            $DB->delete_records('block_whatsapp_log', [
+            $DB->delete_records('block_whatsapp_messenger_log', [
                 'courseid' => $courseid,
-                'recipient' => $userid,
+                'userid' => $userid,
             ]);
         }
     }
@@ -296,15 +298,15 @@ class provider implements
 
         // Delete messages sent by users.
         $DB->delete_records_select(
-            'block_whatsapp_log',
-            "courseid = :courseid AND userid $insql",
+            'block_whatsapp_messenger_log',
+            "courseid = :courseid AND senderid $insql",
             array_merge(['courseid' => $courseid], $inparams)
         );
 
         // Delete messages received by users.
         $DB->delete_records_select(
-            'block_whatsapp_log',
-            "courseid = :courseid AND recipient $insql",
+            'block_whatsapp_messenger_log',
+            "courseid = :courseid AND userid $insql",
             array_merge(['courseid' => $courseid], $inparams)
         );
     }
