@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the WhatsApp Messenger block.
+ * External services definitions for the WhatsApp Messenger block.
  *
  * @package    block_whatsapp_messenger
  * @copyright  2024 CentricApp LTD (https://centricapp.co.il)
@@ -24,8 +24,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2024011302;
-$plugin->requires  = 2020110900;
-$plugin->component = 'block_whatsapp_messenger';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.2';
+$functions = [
+    'block_whatsapp_messenger_send_message' => [
+        'classname'   => 'block_whatsapp_messenger\external\send_message',
+        'methodname'  => 'execute',
+        'classpath'   => '',
+        'description' => 'Send WhatsApp message to course participants',
+        'type'        => 'write',
+        'ajax'        => true,
+        'capabilities'=> 'block/whatsapp_messenger:sendmessages',
+    ],
+];
