@@ -32,6 +32,6 @@ $functions = [
         'description' => 'Send WhatsApp message to course participants',
         'type'        => 'write',
         'ajax'        => true,
-        'capabilities'=> 'block/whatsapp_messenger:sendmessages',
+        'capabilities'=> 'block/whatsapp_messenger:sendmessage',
     ],
 ];
