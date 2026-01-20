@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2024011302;
+$plugin->version   = 2026012000;
 $plugin->requires  = 2020110900;
 $plugin->component = 'block_whatsapp_messenger';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.2';
+$plugin->release   = '1.3';
