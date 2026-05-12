@@ -24,28 +24,24 @@
 
 namespace block_whatsapp_messenger\external;
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_value;
-use core_external\external_single_structure;
 use context_course;
 use curl;
 
 /**
  * External service for sending WhatsApp messages.
  */
-class send_message extends external_api {
+class send_message extends \core_external\external_api {
 
     /**
      * Returns description of method parameters.
      *
-     * @return external_function_parameters
+     * @return \core_external\external_function_parameters
      */
     public static function execute_parameters() {
-        return new external_function_parameters([
-            'courseid' => new external_value(PARAM_INT, 'Course ID'),
-            'recipient' => new external_value(PARAM_INT, 'Recipient user ID (0 for all)'),
-            'message' => new external_value(PARAM_TEXT, 'Message content'),
+        return new \core_external\external_function_parameters([
+            'courseid' => new \core_external\external_value(PARAM_INT, 'Course ID'),
+            'recipient' => new \core_external\external_value(PARAM_INT, 'Recipient user ID (0 for all)'),
+            'message' => new \core_external\external_value(PARAM_TEXT, 'Message content'),
         ]);
     }
 
@@ -346,14 +342,14 @@ class send_message extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_single_structure
+     * @return \core_external\external_single_structure
      */
     public static function execute_returns() {
-        return new external_single_structure([
-            'success' => new external_value(PARAM_BOOL, 'Success status'),
-            'message' => new external_value(PARAM_TEXT, 'Result message'),
-            'successcount' => new external_value(PARAM_INT, 'Number of successful sends'),
-            'failcount' => new external_value(PARAM_INT, 'Number of failed sends'),
+        return new \core_external\external_single_structure([
+            'success' => new \core_external\external_value(PARAM_BOOL, 'Success status'),
+            'message' => new \core_external\external_value(PARAM_TEXT, 'Result message'),
+            'successcount' => new \core_external\external_value(PARAM_INT, 'Number of successful sends'),
+            'failcount' => new \core_external\external_value(PARAM_INT, 'Number of failed sends'),
         ]);
     }
 }

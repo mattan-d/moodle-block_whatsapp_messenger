@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $functions = [
     'block_whatsapp_messenger_send_message' => [
-        'classname'   => 'block_whatsapp_messenger\external\send_message',
+        'classname'   => \block_whatsapp_messenger\external\send_message::class,
         'methodname'  => 'execute',
         'classpath'   => '',
         'description' => 'Send WhatsApp message to course participants',
